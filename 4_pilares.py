@@ -89,4 +89,22 @@ class GestorAlertas:
                 self._ui.mostrar(alerta)
                 for n in self._notificadores:
                     n.enviar(msg)
-                    
+
+if __name__ == "__main__":
+    sensorTemperatura = SensorTemperatura(id="T1", umbral=75.0)
+    sensorVibracion = SensorVibracion(id="V1", rms_umbral=2.0)
+
+    for v in [70, 76, 78]:
+        sensorTemperatura.leer(v)
+    for v in [1.5, 2.1, 2.5]:
+        sensorVibracion.leer(v)
+
+    email = NotificadorEmail(destinatario="admin@admin.com")
+    webhook = NotificadorWebhook(url="http://example.com/alert")
+
+    gestor = GestorAlertas(
+        sensores=[sensorTemperatura, sensorVibracion],
+        notificadores=[email, webhook]
+    )
+
+    gestor.evaluar_y_notificar()
